@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Warga RT 006 — Tetangga, jadi lebih dekat{% endblock %}
+{% block content %}
+<section class="hero shell">
+  <div class="hero-copy">
+    <div class="eyebrow"><span class="live-dot"></span> PORTAL WARGA · RT 006</div>
+    <h1>Tetangga,<br><em>jadi lebih dekat.</em></h1>
+    <p class="hero-text">Satu tempat untuk layanan lingkungan, informasi RUKMA, dan kebutuhan warga. Lebih mudah, lebih terhubung.</p>
+    <a class="button button-dark" href="{{ url_for('surat_pengantar') }}">Ajukan surat pengantar <span>↗</span></a>
+    <div class="hero-note"><span class="avatar-stack"><i>W</i><i>R</i><i>06</i></span><span>Untuk lingkungan yang<br><strong>rukun dan saling peduli</strong></span></div>
+  </div>
+  <div class="hero-art" aria-label="Ilustrasi lingkungan tempat tinggal yang asri">
+    <div class="sun"></div>
+    <div class="art-label"><span class="label-icon">⌂</span><span><b>Lingkungan kita</b><small>Rumah untuk semua</small></span><span class="label-arrow">↗</span></div>
+    <div class="art-hill hill-back"></div><div class="art-hill hill-front"></div>
+    <div class="tree tree-one"><i></i><b></b></div><div class="tree tree-two"><i></i><b></b></div>
+    <div class="house house-left"><span class="roof"></span><span class="walls"><i></i><b></b></span></div>
+    <div class="house house-right"><span class="roof"></span><span class="walls"><i></i><b></b></span></div>
+    <div class="path"></div><div class="art-sparkle sparkle-one">✳</div><div class="art-sparkle sparkle-two">✦</div>
+    <div class="art-caption">Ruang kecil untuk<br><strong>kebersamaan besar.</strong></div>
+  </div>
+</section>
+
+<section class="services shell">
+  <div class="section-heading">
+    <div><div class="eyebrow muted-eyebrow">LAYANAN WARGA</div><h2>Ada yang bisa<br>kami bantu?</h2></div>
+    <p>Pilih layanan yang kamu butuhkan.<br>Semua jadi lebih sederhana.</p>
+  </div>
+  <div class="service-grid">
+    <a class="service-card card-letter" href="{{ url_for('surat_pengantar') }}">
+      <div class="card-top"><span class="card-icon">↗</span><span class="card-number">01 / LAYANAN</span></div>
+      <div><h3>Surat<br>Pengantar</h3><p>Ajukan kebutuhan surat secara online. Praktis, tanpa perlu bingung harus mulai dari mana.</p></div>
+      <span class="card-link">Mulai pengajuan <b>↗</b></span>
+      <span class="decor decor-letter">✳</span>
+    </a>
+    <a class="service-card card-rukma" href="{{ url_for('data_rukma') }}">
+      <div class="card-top"><span class="card-icon">♡</span><span class="card-number">02 / KEBERSAMAAN</span></div>
+      <div><h3>Data<br>RUKMA</h3><p>Kenali Rukun Kematian dan semangat gotong royong warga di lingkungan kita.</p></div>
+      <span class="card-link">Kenali RUKMA <b>↗</b></span>
+      <span class="decor decor-rukma">✿</span>
+    </a>
+    <a class="service-card card-data" href="{{ url_for('data_warga') }}">
+      <div class="card-top"><span class="card-icon">⌂</span><span class="card-number">03 / KHUSUS PENGURUS</span></div>
+      <div><h3>Data<br>Warga</h3><p>Ruang pengelolaan data warga yang aman, khusus untuk Ketua RT.</p></div>
+      <span class="card-link">Masuk sebagai Ketua RT <b>↗</b></span>
+      <span class="decor decor-data">▦</span>
+    </a>
+  </div>
+</section>
+
+<section class="community-strip shell">
+  <div class="community-copy"><span class="eyebrow">RT 006 DALAM ANGKA</span><h2>Lingkungan yang<br>tumbuh bersama.</h2><p>Setiap warga punya peran dalam membangun lingkungan yang nyaman dan saling mendukung.</p></div>
+  <div class="stat-block"><strong>{{ stats.residents }}</strong><span>Data warga<br>terdaftar</span></div>
+  <div class="stat-block"><strong>{{ stats.rukma }}</strong><span>Anggota<br>RUKMA</span></div>
+  <div class="stat-block"><strong>{{ stats.letters }}</strong><span>Pengajuan surat<br>menunggu</span></div>
+  <div class="strip-flower">✳</div>
+</section>
+{% endblock %}

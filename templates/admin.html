@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Panel Ketua RT — Warga RT 006{% endblock %}
+{% block content %}
+<section class="admin-hero shell">
+  <div><div class="eyebrow"><span class="live-dot"></span> RUANG PENGURUS · RT 006</div><h1>Selamat bekerja,<br><em>Ketua RT.</em></h1><p>Kelola informasi warga dan layanan lingkungan dari satu tempat.</p></div>
+  <form method="post" action="{{ url_for('logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="button button-outline" type="submit">Keluar <span>↗</span></button></form>
+</section>
+<section class="admin-summary shell"><a href="#pengajuan"><span>Pengajuan menunggu</span><strong>{{ letters|selectattr('status', 'equalto', 'Menunggu')|list|length }}</strong></a><a href="#warga"><span>Data warga</span><strong>{{ residents|length }}</strong></a><a href="#rukma"><span>Kepala Keluarga RUKMA</span><strong>{{ rukma_heads|length }}</strong></a></section>
+
+<section class="admin-section shell" id="pengajuan">
+  <div class="admin-section-head"><div><span class="eyebrow muted-eyebrow">LAYANAN SURAT</span><h2>Pengajuan masuk</h2></div><span class="count-pill">{{ letters|length }} total</span></div>
+  {% if letters %}
+  <div class="table-wrap"><table><thead><tr><th>Warga</th><th>Keperluan</th><th>Referensi</th><th>Status</th><th>Perbarui</th><th>Surat</th></tr></thead><tbody>
+  {% for letter in letters %}<tr><td><strong>{{ letter.name }}</strong><small>{{ letter.address }} · {{ letter.phone }}</small></td><td>{{ letter.purpose }}</td><td class="reference">{{ letter.reference }}<small>{{ letter.created_at }}</small></td><td><span class="status status-{{ letter.status|lower|replace(' ', '-') }}">{{ letter.status }}</span></td><td><form class="inline-form" method="post" action="{{ url_for('update_letter_status', letter_id=letter.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><select name="status" aria-label="Status pengajuan {{ letter.reference }}"><option {% if letter.status == 'Menunggu' %}selected{% endif %}>Menunggu</option><option {% if letter.status == 'Diproses' %}selected{% endif %}>Diproses</option><option {% if letter.status == 'Diterima' %}selected{% endif %}>Diterima</option><option {% if letter.status == 'Selesai' %}selected{% endif %}>Selesai</option></select><button class="small-button" type="submit">Simpan</button></form></td><td>{% if letter.birth_date %}<a class="small-button letter-open" href="{{ url_for('print_letter', reference=letter.reference) }}" target="_blank" rel="noopener noreferrer">Buka</a>{% else %}<span>Data lama</span>{% endif %}</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% else %}<div class="empty-state"><span>✳</span><p>Belum ada pengajuan surat.</p></div>{% endif %}
+</section>
+
+<section class="admin-section shell" id="warga">
+  <div class="admin-section-head"><div><span class="eyebrow muted-eyebrow">LINGKUNGAN</span><h2>Data warga</h2></div></div>
+  <div class="management-grid">
+    <div class="kk-scan-panel">
+      <div class="scan-heading"><span class="scan-icon">▣</span><div><h3>Impor dari Kartu Keluarga</h3><p>Pindai KK untuk mendeteksi NIK anggota.</p></div></div>
+      <label class="camera-picker">Ambil foto atau pilih gambar KK<input id="kk-image" type="file" accept="image/*" capture="environment"></label>
+      <img id="kk-preview" class="kk-preview" alt="Pratinjau foto Kartu Keluarga" hidden>
+      <button id="scan-kk" class="button button-outline full-button" type="button" disabled>Pindai gambar <span>⌕</span></button>
+      <p id="scan-status" class="scan-status" role="status">Perlu internet untuk memuat OCR; foto diproses di browser dan tidak dikirim atau disimpan.</p>
+      <details class="ocr-details"><summary>Lihat hasil teks OCR</summary><pre id="ocr-text"></pre></details>
+      <form id="kk-import-form" method="post" action="{{ url_for('import_kk_residents') }}" onsubmit="return confirm('Simpan semua anggota KK yang tercantum ke database?')">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Nomor KK<input id="kk-number" name="family_card_number" inputmode="numeric" maxlength="16" pattern="[0-9]{16}" required placeholder="16 angka; periksa hasil OCR"></label>
+        <label>Alamat sesuai KK<input name="address" maxlength="250" required placeholder="Alamat yang berlaku untuk keluarga"></label>
+        <label>Nomor telepon <small>(opsional, sama untuk anggota)</small><input name="phone" maxlength="30" placeholder="Nomor yang bisa dihubungi"></label>
+        <div class="scan-members-heading"><strong>Anggota keluarga</strong><small>Urutan pertama yang dimasukkan akan dicatat sebagai Kepala Keluarga. Pastikan urutan nama sesuai KK.</small></div>
+        <div id="kk-members" class="scan-members"><p class="scan-empty">Pilih foto KK lalu tekan “Pindai gambar”.</p></div>
+        <button id="add-kk-member" class="button button-outline full-button" type="button">Tambah anggota manual <span>＋</span></button>
+        <button id="save-kk" class="button button-dark full-button" type="submit" disabled>Simpan anggota ke database <span>↗</span></button>
+      </form>
+    </div>
+    <form class="mini-form" method="post" action="{{ url_for('add_resident') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><h3>Tambah warga</h3><label>Nama lengkap<input name="name" maxlength="100" required placeholder="Nama warga"></label><label>Alamat<input name="address" maxlength="250" required placeholder="Alamat rumah"></label><label>Nomor telepon <small>(opsional)</small><input name="phone" maxlength="30" placeholder="Nomor yang bisa dihubungi"></label><button class="button button-dark full-button" type="submit">Simpan data <span>↗</span></button></form>
+    <div class="record-list">{% if residents %}{% for resident in residents %}<article class="record-row"><span class="record-avatar">{{ resident.name[:1]|upper }}</span><div class="record-copy"><strong>{{ resident.name }}{% if resident.is_family_head %} <span class="status status-selesai">Kepala Keluarga</span>{% endif %}</strong><small>{{ resident.address }}{% if resident.national_id %} · NIK {{ resident.national_id }}{% endif %}{% if resident.family_card_number %} · KK {{ resident.family_card_number }}{% endif %}{% if resident.phone %} · {{ resident.phone }}{% endif %}</small><small class="record-status record-status-{{ resident.status|lower|replace(' ', '-') }}">{{ resident.status }}{% if resident.status_note %} · {{ resident.status_note }}{% endif %}</small></div>    <div class="resident-actions"><form class="inline-form resident-edit-form" method="post" action="{{ url_for('edit_resident', resident_id=resident.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><label>Nama<input name="name" maxlength="100" value="{{ resident.name }}" required></label><label>Alamat<input name="address" maxlength="250" value="{{ resident.address }}" required></label><label>Telepon<input name="phone" maxlength="30" value="{{ resident.phone }}"></label><label>Status<select name="status"><option {% if resident.status == 'Aktif' %}selected{% endif %}>Aktif</option><option {% if resident.status == 'Pindah' %}selected{% endif %}>Pindah</option><option {% if resident.status == 'Keluar' %}selected{% endif %}>Keluar</option><option {% if resident.status == 'Meninggal' %}selected{% endif %}>Meninggal</option></select></label><label>Catatan<input name="status_note" maxlength="250" value="{{ resident.status_note }}" placeholder="Contoh: pindah ke Cibubur"></label><button class="small-button" type="submit">Perbarui</button></form></div></article>{% endfor %}{% else %}<div class="empty-state"><span>⌂</span><p>Belum ada data warga.</p></div>{% endif %}</div>  </div>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
+<script src="{{ url_for('static', filename='kk_scan.js') }}" defer></script>
+
+<section class="admin-section shell" id="rukma">
+  <div class="admin-section-head"><div><span class="eyebrow muted-eyebrow">RUKUN KEMATIAN</span><h2>Iuran Kepala Keluarga</h2><p>Nama diambil dari data warga: hanya satu Kepala Keluarga pada setiap KK yang ditagihkan.</p></div><span class="count-pill">{{ rukma_heads|length }} KK aktif</span></div>
+  <div class="rukma-dues-panel">
+    <div class="admin-section-head"><div><span class="eyebrow muted-eyebrow">KAS SOSIAL · KHUSUS KETUA RT</span><h2>Pencatatan iuran bulanan</h2><p>Catat iuran rutin per Kepala Keluarga. Data pembayaran hanya tampil di panel Ketua RT.</p></div></div>
+    <div class="rukma-dues-toolbar">
+      <form class="rukma-period-form" method="get" action="{{ url_for('data_warga') }}#rukma">
+        <label for="iuran-bulan">Bulan pencatatan</label>
+        <input id="iuran-bulan" type="month" name="iuran_bulan" value="{{ rukma_period }}" required>
+        <button class="small-button" type="submit">Tampilkan</button>
+      </form>
+      <form class="rukma-fee-form" method="post" action="{{ url_for('update_rukma_fee') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="period" value="{{ rukma_period }}">
+        <label for="iuran-nominal">Nominal per KK untuk bulan ini</label>
+        <div><input id="iuran-nominal" type="number" name="amount" min="1" max="1000000000" step="1" value="{{ rukma_fee or '' }}" required placeholder="Contoh: 10000"><button class="button button-dark" type="submit">Simpan nominal</button></div>
+      </form>
+    </div>
+    <div class="rukma-dues-summary">
+      <div><span>KK ditagihkan</span><strong>{{ rukma_dues|length }}</strong></div>
+      <div><span>Sudah lunas</span><strong>{{ rukma_paid_count }}</strong></div>
+      <div><span>Belum lunas</span><strong>{{ rukma_dues|length - rukma_paid_count }}</strong></div>
+      <div><span>Total terkumpul bulan ini</span><strong>{{ rukma_collected|rupiah }}</strong></div>
+    </div>
+    {% if not rukma_fee %}<p class="rukma-dues-notice">Tetapkan nominal bulan {{ rukma_period }} sebelum mencatat pembayaran.</p>{% endif %}
+    {% if rukma_dues %}
+    <div class="table-wrap"><table><thead><tr><th>Kepala Keluarga</th><th>Alamat</th><th>Nominal</th><th>Status iuran</th><th>Tindakan</th></tr></thead><tbody>
+      {% for member in rukma_dues %}
+      <tr>
+        <td><strong>{{ member.name }}</strong></td>
+        <td>{{ member.address }}</td>
+        <td>{% if member.amount %}{{ member.amount|rupiah }}{% else %}—{% endif %}</td>
+        <td>{% if member.payment_status == 'Lunas' %}<span class="status status-selesai">Lunas</span><small>{{ member.paid_at }}</small>{% elif member.resident_status != 'Aktif' %}<span class="status">Tidak aktif</span>{% else %}<span class="status">Belum lunas</span>{% endif %}</td>
+        <td>
+          {% if member.payment_status == 'Lunas' %}
+          <form method="post" action="{{ url_for('cancel_rukma_payment', resident_id=member.id, period=rukma_period) }}" onsubmit="return confirm('Batalkan pencatatan lunas untuk {{ member.name }}?')"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="small-button" type="submit">Batalkan</button></form>
+          {% elif member.resident_status == 'Aktif' and rukma_fee %}
+          <form method="post" action="{{ url_for('record_rukma_payment', resident_id=member.id, period=rukma_period) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="small-button" type="submit">Catat lunas</button></form>
+          {% else %}<span>—</span>{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody></table></div>
+    {% else %}<div class="empty-state"><span>♡</span><p>Belum ada KK aktif yang ditagihkan untuk bulan ini.</p></div>{% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7f2">
+  <title>{% block title %}Warga RT 006{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="{{ url_for('home') }}" aria-label="Warga RT 006, beranda">
+      <span class="brand-mark">06</span>
+      <span class="brand-copy"><strong>Warga RT 006</strong><small>Rukun, peduli, bertumbuh.</small></span>
+    </a>
+    <nav class="main-nav" aria-label="Navigasi utama">
+      <a href="{{ url_for('home') }}">Beranda</a>
+      <a href="{{ url_for('surat_pengantar') }}">Surat Pengantar</a>
+      <a href="{{ url_for('data_rukma') }}">RUKMA</a>
+      {% if logged_in %}
+      <a href="{{ url_for('account_settings') }}">Pengaturan akun</a>
+      {% endif %}
+      <a class="nav-cta" href="{{ url_for('data_warga') }}">
+        {% if logged_in %}Panel Ketua RT{% else %}Ketua RT <span aria-hidden="true">↗</span>{% endif %}
+      </a>
+    </nav>
+    <button class="menu-toggle" type="button" aria-label="Buka navigasi" aria-expanded="false">☰</button>
+  </header>
+
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-stack" role="status">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <a class="footer-brand" href="{{ url_for('home') }}"><span class="brand-mark small">06</span> Warga RT 006</a>
+    <span>Portal layanan lingkungan · <span id="current-year"></span></span>
+    <a href="{{ url_for('data_warga') }}">Akses Ketua RT</a>
+  </footer>
+  <script>
+    document.getElementById("current-year").textContent = new Date().getFullYear();
+    const menuButton = document.querySelector(".menu-toggle");
+    const navigation = document.querySelector(".main-nav");
+    menuButton.addEventListener("click", () => {
+      const isOpen = menuButton.getAttribute("aria-expanded") === "true";
+      menuButton.setAttribute("aria-expanded", String(!isOpen));
+      menuButton.setAttribute("aria-label", isOpen ? "Buka navigasi" : "Tutup navigasi");
+      navigation.classList.toggle("nav-open", !isOpen);
+    });
+  </script>
+</body>
+</html>

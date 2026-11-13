@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <title>Surat Pengantar {{ letter.reference }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="print-page">
+  <div class="print-controls">
+    {% if is_approved %}
+    <p>Pengajuan diterima oleh Ketua RT pada {{ issued_date }}. Surat tetap memerlukan tanda tangan basah sebelum digunakan.</p>
+    {% else %}
+    <p>Surat ini dapat diunduh sekarang, tetapi masih berstatus draf sampai diperiksa dan disetujui Ketua RT.</p>
+    {% endif %}
+    <div><a class="button button-dark" href="{{ download_url }}">Unduh PDF <span>↓</span></a><button class="button button-outline" type="button" onclick="window.print()">Cetak <span>↗</span></button></div>
+  </div>
+  <main class="letter-paper">
+    <img class="letter-watermark" src="{{ url_for('static', filename='jakarta-seal.png') }}" alt="" aria-hidden="true">
+    <header class="letter-head">
+      <img class="letter-emblem" src="{{ url_for('static', filename='jakarta-seal.png') }}" alt="Lambang Kota Administrasi Jakarta Utara">
+      <div class="letter-authority">
+        <strong class="letter-rt-title">RUKUN TETANGGA 006/01</strong>
+        <strong>KELURAHAN CILINCING · KECAMATAN CILINCING · KOTA ADMINISTRASI JAKARTA UTARA</strong>
+        <span>Sekretariat: Jl. Baru RT 006 RW 01 · Kotak Pos 14120</span>
+      </div>
+    </header>
+    <div class="letter-rule"></div>
+    <section class="letter-content">
+      <h1><span>SURAT PENGANTAR</span></h1>
+      <p class="letter-opening">Yang bertanda tangan di bawah ini Pengurus RT. 006 / RW. 01 Kelurahan Cilincing, Kecamatan Cilincing - Jakarta Utara menerangkan bahwa:</p>
+      <dl class="letter-details">
+        <div><dt>Nama</dt><span>:</span><dd>{{ letter.name }}</dd></div>
+        <div><dt>Tempat / Tgl. Lahir</dt><span>:</span><dd>{{ letter.birth_place }}, {{ birth_date }}</dd></div>
+        <div><dt>Jenis Kelamin</dt><span>:</span><dd>{{ letter.gender }}</dd></div>
+        <div><dt>Agama</dt><span>:</span><dd>{{ letter.religion }}</dd></div>
+        <div><dt>Status Perkawinan</dt><span>:</span><dd>{{ letter.marital_status or "—" }}</dd></div>
+        <div><dt>Pekerjaan</dt><span>:</span><dd>{{ letter.occupation }}</dd></div>
+        <div><dt>No. KTP / NIK</dt><span>:</span><dd>{{ letter.national_id }}</dd></div>
+        <div><dt>Kewarganegaraan</dt><span>:</span><dd>{{ letter.nationality }}</dd></div>
+        <div><dt>Alamat</dt><span>:</span><dd>{{ letter.address }}</dd></div>
+      </dl>
+      <dl class="letter-details letter-purpose"><div><dt>Keperluan</dt><span>:</span><dd>{{ letter.purpose }}</dd></div></dl>
+      <div class="letter-number-row"><span>No. {{ letter.reference }}</span><span>Jakarta, {{ issued_date }}</span></div>
+      {% if is_approved %}
+      <p class="letter-approval">PENGAJUAN DITERIMA KETUA RT</p>
+      {% else %}
+      <p class="letter-approval letter-draft">DRAF — BELUM DISETUJUI KETUA RT</p>
+      {% endif %}
+      <div class="signature-grid">
+        <div class="signature">
+          <strong>Mengetahui,</strong>
+          <strong>Pengurus RW. 01 Kel. Cilincing</strong>
+          <div class="signature-space"></div>
+          <span></span>
+        </div>
+        <div class="signature">
+          <strong>Mengetahui,</strong>
+          <strong>Pengurus RT. 006/01 Kel. Cilincing</strong>
+          <div class="signature-space"></div>
+          <span></span>
+        </div>
+      </div>
+    </section>
+    <footer class="letter-notice">Formulir layanan administrasi RT — bukan surat yang diterbitkan Kelurahan. Belum sah sebelum diperiksa dan ditandatangani pengurus berwenang.</footer>
+  </main>
+</body>
+</html>

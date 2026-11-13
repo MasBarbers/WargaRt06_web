@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Akses Ketua RT — Warga RT 006{% endblock %}
+{% block content %}
+<section class="login-layout shell">
+  <div class="login-intro"><div class="eyebrow"><span class="live-dot"></span> RUANG PENGURUS</div><h1>Data warga,<br><em>terjaga aman.</em></h1><p>Halaman ini hanya untuk Ketua RT 006. Masuk dengan akun pengurus untuk mengelola data lingkungan.</p><div class="login-ornament">06<span>⌂</span></div></div>
+  <form class="login-card" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="lock-icon">⌑</div><span class="eyebrow muted-eyebrow">AKSES TERBATAS</span><h2>Selamat datang.</h2><p class="login-subtitle">Masuk ke panel pengelolaan RT 006.</p>
+    {% if not has_admin %}<div class="setup-notice">Akun Ketua RT belum dibuat. Jalankan <code>python create_admin.py</code> di folder aplikasi terlebih dahulu.</div>{% endif %}
+    <label>Email<input type="email" name="email" autocomplete="username" placeholder="ketua@example.com" required></label>
+    <label>Password<input type="password" name="password" autocomplete="current-password" placeholder="Masukkan password" required></label>
+    <button class="button button-dark full-button" type="submit">Masuk sebagai Ketua RT <span>↗</span></button>
+    <div class="login-divider"><span>atau</span></div>
+    {% if google_login_enabled %}
+      <a class="google-button" href="{{ url_for('google_login') }}">
+        <svg aria-hidden="true" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.72 7.18l7.62 5.91c4.45-4.11 7.14-10.17 7.14-17.56z"/><path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.2A23.9 23.9 0 0 0 0 24c0 3.88.93 7.55 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.8l-7.62-5.91c-2.12 1.42-4.83 2.27-8.28 2.27-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Masuk dengan Google
+      </a>
+      <p class="google-note">Gunakan akun Google yang emailnya sama dengan akun Ketua RT.</p>
+    {% else %}
+      <p class="google-note">Login Google tersedia setelah kredensial OAuth Google dikonfigurasi.</p>
+    {% endif %}
+    <a class="back-link" href="{{ url_for('home') }}">← Kembali ke beranda</a>
+  </form>
+</section>
+{% endblock %}

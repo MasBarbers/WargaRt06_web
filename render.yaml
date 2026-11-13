@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: warga-rt006
+    runtime: python
+    plan: starter
+    region: singapore
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --workers 1 --threads 4 --timeout 120
+    healthCheckPath: /healthz
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: warga-rt006-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: COOKIE_SECURE
+        value: "1"
+
+databases:
+  - name: warga-rt006-db
+    plan: basic-256mb
+    region: singapore
+    databaseName: rt006
+    user: rt006
+    postgresMajorVersion: "16"
+    ipAllowList: []

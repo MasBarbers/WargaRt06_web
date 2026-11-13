@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Status Pengajuan Surat — Warga RT 006{% endblock %}
+{% block content %}
+<section class="letter-status-page shell">
+  <span class="eyebrow muted-eyebrow">STATUS PENGAJUAN SURAT</span>
+  <h1>Pengajuan Anda</h1>
+  <p class="letter-status-reference">Nomor referensi: <strong>{{ letter.reference }}</strong></p>
+  <div class="letter-status-card">
+    {% if letter.status == 'Menunggu' %}
+      <span class="status status-menunggu">Menunggu pemeriksaan</span>
+      <h2>Pengajuan sedang menunggu</h2>
+      <p>Surat PDF sudah dapat diunduh sebagai draf. Ketua RT belum memeriksa pengajuan ini.</p>
+    {% elif letter.status == 'Diproses' %}
+      <span class="status status-diproses">Sedang diproses</span>
+      <h2>Pengajuan sedang diperiksa</h2>
+      <p>Surat PDF sudah dapat diunduh sebagai draf. Ketua RT sedang memeriksa data dan keperluan surat.</p>
+    {% else %}
+      <span class="status status-{{ letter.status|lower|replace(' ', '-') }}">{{ letter.status }}</span>
+      <h2>Pengajuan belum disetujui</h2>
+      <p>Silakan hubungi Ketua RT untuk informasi lebih lanjut mengenai status pengajuan ini.</p>
+    {% endif %}
+    <a class="button button-dark" href="{{ url_for('download_letter', reference=letter.reference) }}">Unduh surat PDF <span>↓</span></a>
+  </div>
+  <p class="privacy-note">PDF yang belum disetujui Ketua RT berstatus draf dan belum sah digunakan. Simpan tautan referensi ini untuk melihat status terbaru.</p>
+  <a class="back-link" href="{{ url_for('home') }}">← Kembali ke beranda</a>
+</section>
+{% endblock %}

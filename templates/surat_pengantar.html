@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Surat Pengantar — Warga RT 006{% endblock %}
+{% block content %}
+<section class="page-hero shell compact-hero">
+  <div class="eyebrow"><span class="live-dot"></span> LAYANAN WARGA</div>
+  <h1>Surat pengantar,<br><em>lebih mudah.</em></h1>
+  <p>Isi biodata dan keperluan surat. Setelah dikirim, surat PDF langsung dapat diunduh. Pengajuan tetap akan diperiksa oleh Ketua RT.</p>
+</section>
+<section class="form-layout shell">
+  <form class="form-card" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-heading"><span class="form-step">01</span><div><h2>Formulir pengajuan</h2><p>Lengkapi informasi dengan benar.</p></div></div>
+    <label>Nama lengkap<input name="name" maxlength="100" autocomplete="name" placeholder="Nama sesuai identitas" required></label>
+    <div class="form-columns">
+      <label>Tempat lahir<input name="birth_place" maxlength="100" placeholder="Kota/kabupaten" required></label>
+      <label>Tanggal lahir<input name="birth_date" type="date" required></label>
+    </div>
+    <div class="form-columns">
+      <label>Jenis kelamin<select name="gender" required><option value="">Pilih jenis kelamin</option><option value="LAKI-LAKI">Laki-laki</option><option value="PEREMPUAN">Perempuan</option></select></label>
+      <label>Agama<select name="religion" required><option value="">Pilih agama</option><option>ISLAM</option><option>KRISTEN PROTESTAN</option><option>KATOLIK</option><option>HINDU</option><option>BUDDHA</option><option>KONGHUCU</option><option>LAINNYA</option></select></label>
+    </div>
+    <label>Status perkawinan<select name="marital_status" required><option value="">Pilih status perkawinan</option><option value="BELUM KAWIN">Belum kawin</option><option value="KAWIN">Kawin</option><option value="CERAI HIDUP">Cerai hidup</option><option value="CERAI MATI">Cerai mati</option></select></label>
+    <label>Kewarganegaraan<input name="nationality" maxlength="50" value="WNI" required></label>
+    <label>NIK KTP<input name="national_id" inputmode="numeric" maxlength="16" pattern="[0-9]{16}" placeholder="16 angka sesuai KTP" required></label>
+    <label>Alamat<textarea name="address" maxlength="250" rows="2" autocomplete="street-address" placeholder="Nama jalan, nomor rumah, atau patokan" required></textarea></label>
+    <div class="form-columns">
+      <label>Pekerjaan<input name="occupation" maxlength="100" placeholder="Pekerjaan saat ini" required></label>
+      <label>Nomor WhatsApp<input name="phone" type="tel" maxlength="30" autocomplete="tel" placeholder="Contoh: 0812 3456 7890" required></label>
+    </div>
+    <label>Keperluan surat<textarea name="purpose" maxlength="500" rows="3" placeholder="Jelaskan surat yang dibutuhkan dan keperluannya" required></textarea></label>
+    <button class="button button-dark full-button" type="submit">Kirim pengajuan <span>↗</span></button>
+    <p class="privacy-note">NIK adalah data pribadi. Tautan surat bersifat rahasia; jangan bagikan ke orang lain. PDF yang belum disetujui akan ditandai sebagai draf.</p>
+  </form>
+  <aside class="form-aside">
+    <div class="aside-icon">✳</div><span class="eyebrow">ALUR SEDERHANA</span><h3>Dari rumah,<br>tetap terlayani.</h3>
+    <ol class="steps"><li><i>1</i><span><b>Isi formulir</b><small>Masukkan NIK dan biodata sesuai identitas.</small></span></li><li><i>2</i><span><b>Periksa surat</b><small>Lihat isi surat terlebih dahulu, lalu unduh PDF jika sudah sesuai.</small></span></li><li><i>3</i><span><b>Pantau persetujuan</b><small>Ketua RT tetap memeriksa pengajuan dan dapat memperbarui status.</small></span></li></ol>
+    <div class="aside-foot">Surat berstatus draf sampai diperiksa dan ditandatangani pejabat berwenang.</div>
+  </aside>
+</section>
+{% endblock %}

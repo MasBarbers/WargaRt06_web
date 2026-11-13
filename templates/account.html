@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Pengaturan akun — Warga RT 006{% endblock %}
+{% block content %}
+<section class="admin-section shell account-settings">
+  <div class="admin-section-head"><div><span class="eyebrow muted-eyebrow">PENGATURAN</span><h2>Akun Ketua RT</h2></div></div>
+  <p class="account-help">Perbarui email akun atau ganti password. Password saat ini diperlukan untuk menyimpan perubahan.</p>
+  <form class="account-form" method="post" action="{{ url_for('update_admin_account') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Email akun<input type="email" name="email" maxlength="254" value="{{ admin_email }}" required autocomplete="username"></label>
+    <label>Password saat ini<input type="password" name="current_password" required autocomplete="current-password"></label>
+    <label>Password baru <small>(kosongkan jika tidak ingin mengganti password)</small><input type="password" name="new_password" minlength="8" maxlength="128" autocomplete="new-password" placeholder="Minimal 8 karakter"></label>
+    <label>Ulangi password baru<input type="password" name="confirm_password" minlength="8" maxlength="128" autocomplete="new-password"></label>
+    <button class="button button-dark" type="submit">Simpan perubahan <span>↗</span></button>
+  </form>
+</section>
+{% endblock %}
